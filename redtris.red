@@ -13,16 +13,27 @@ mtx: none
 score: 0
 lines-cleared: 0
 
-mtx-new: func[][mtx: dup 22 (wrap dup 10 ".")]
+row-new: func[][wrap dup 10 "."]
+mtx-new: func[][mtx: dup 22 row-new]
 mtx-put: func[][foreach row mtx [print row]]
-mtx-get: func[][
-  mtx: collect[loop 22 [keep wrap split trim input " "]]]
+get-row: func[s][wrap split trim s " "]
+mtx-get: func[][mtx: collect[loop 22 [keep get-row input]]]
+
+step-game: func[][
+  i: 0
+  foreach row mtx [
+    i: i + 1
+    if not find row "." [
+      score: score + 100
+      lines-cleared: lines-cleared + 1
+      mtx/(i): row-new]]]
 
 cmds: [
   q: [break]
   c: [mtx-new]
   p: [mtx-put]
   g: [mtx-get]
+  s: [step-game]
   ?s: [print score]
   ?n: [print lines-cleared]]
 
