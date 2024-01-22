@@ -1,0 +1,11 @@
+{
+  "attempt": "WvYGqfLRGJXCkBXZCnqWCqRzFpTCfvGd",
+  "targets": {
+    "main": {
+      "args": [
+        "red", "redtris.red"
+      ],
+      "shell": true
+    }
+  }
+}
