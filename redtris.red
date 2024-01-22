@@ -12,6 +12,7 @@ dup: func[n x][collect[loop n [keep copy x]]]
 mtx: none
 score: 0
 lines-cleared: 0
+done: false
 
 grid-new: func[w h c][dup h wrap dup w c]
 line-new: func[w c][wrap dup w c]
@@ -26,6 +27,13 @@ tet: grid-new 4 4 "."
 
 new-tet: func[xs][collect[foreach x xs [keep get-row x]]]
 I: new-tet [". . . ." "c c c c" ". . . ." ". . . ."]
+O: new-tet ["y y" "y y"]
+T: new-tet [". m ." "m m m" ". . ."]
+S: new-tet [". g g" "g g ." ". . ."]
+Z: new-tet ["r r ." ". r r" ". . ."]
+J: new-tet ["b . ." "b b b" ". . ."]
+L: new-tet [". . o" "o o o" ". . ."]
+
 
 step-game: func[][
   i: 0
@@ -37,17 +45,30 @@ step-game: func[][
       mtx/(i): line-new 10 "."]]]
 
 cmds: [
-  q: [break]
+  q: [done: true]
   c: [mtx-new]
   p: [grid-put mtx]
   g: [mtx-get]
   s: [step-game]
-  I: [tet: copy I]
+  ^I: [tet: copy I]
+  ^O: [tet: copy O]
+  ^T: [tet: copy T]
+  ^S: [tet: copy S]
+  ^Z: [tet: copy Z]
+  ^J: [tet: copy J]
+  ^L: [tet: copy L]
   t: [grid-put tet]
   ?s: [print score]
   ?n: [print lines-cleared]]
 
-mtx-new
-forever[
-  s: trim input
-  if s <> "" [do cmds/(to-word s)]]
+main: function[][
+  mtx-new
+  forever[
+    if done [break]
+    s: trim input
+    if s <> "" [
+      foreach cmd (split s " ") [
+        if cmd == (uppercase copy cmd) [cmd: rejoin [#^ cmd]]
+        do cmds/(to-word cmd)]]]]
+
+main
