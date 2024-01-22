@@ -13,11 +13,19 @@ mtx: none
 score: 0
 lines-cleared: 0
 
-row-new: func[][wrap dup 10 "."]
-mtx-new: func[][mtx: dup 22 row-new]
-mtx-put: func[][foreach row mtx [print row]]
+grid-new: func[w h c][dup h wrap dup w c]
+line-new: func[w c][wrap dup w c]
+grid-put: func[g][foreach row g [print row]]
+
+mtx-new: func[][mtx: grid-new 10 22 "."]
 get-row: func[s][wrap split trim s " "]
 mtx-get: func[][mtx: collect[loop 22 [keep get-row input]]]
+
+mtx: mtx-new
+tet: grid-new 4 4 "."
+
+new-tet: func[xs][collect[foreach x xs [keep get-row x]]]
+I: new-tet [". . . ." "c c c c" ". . . ." ". . . ."]
 
 step-game: func[][
   i: 0
@@ -26,14 +34,16 @@ step-game: func[][
     if not find row "." [
       score: score + 100
       lines-cleared: lines-cleared + 1
-      mtx/(i): row-new]]]
+      mtx/(i): line-new 10 "."]]]
 
 cmds: [
   q: [break]
   c: [mtx-new]
-  p: [mtx-put]
+  p: [grid-put mtx]
   g: [mtx-get]
   s: [step-game]
+  I: [tet: copy I]
+  t: [grid-put tet]
   ?s: [print score]
   ?n: [print lines-cleared]]
 
