@@ -3,6 +3,12 @@ Red [title: "A learntris implementation in Red"]
 ; wrap a block in another block
 wrap: func[xs][append/only copy [] xs]
 
+
+map: func[f xs][collect [foreach x copy xs [keep f x]]]
+map2d: func[f xs][map func[row][wrap map :f row] copy xs]
+
+upcase: func[s][uppercase copy s]
+
 ; duplicate x n times
 dup: func[n x][collect[loop n [keep copy x]]]
 
@@ -40,9 +46,18 @@ transpose: function[m][
     keep wrap collect[
       foreach row tmp [keep take row]]]]]
 
-; clocwise and counter-clockwise
-cw: func[m][transpose reverse copy m]
-cc: func[m][reverse transpose m]
+cw: func[{m rotated clockwise} m][transpose reverse copy m]
+cc: func[{m rotated counterclockwise} m][reverse transpose m]
+
+blit: func[{copy sprite s onto grid g at x y} s g x y][
+  cy: 0  tmp: copy/deep g
+  foreach s-row s [
+    cy: cy + 1  cx: 0
+    g-row: tmp/(y + cy - 1)
+    foreach c s-row [
+      cx: cx + 1
+      if c <> "." [g-row/(x + cx - 1): s/(cy)/(cx)]]]
+  tmp]
 
 
 step-game: func[][
@@ -53,6 +68,11 @@ step-game: func[][
       score: score + 100
       lines-cleared: lines-cleared + 1
       mtx/(i): line-new 10 "."]]]
+
+
+
+
+tx: 5 ty: 1
 
 cmds: [
   q: [done: true]
@@ -67,6 +87,7 @@ cmds: [
   ^Z: [tet: copy Z]
   ^J: [tet: copy J]
   ^L: [tet: copy L]
+  ^P: [grid-put blit (map2d :upcase tet) mtx tx ty]
   cw: [tet: cw tet]
   cc: [tet: cc tet]
   nl: [print ""]
