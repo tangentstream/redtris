@@ -74,7 +74,8 @@ cmds: [
   ?s: [print score]
   ?n: [print lines-cleared]]
 
-main: function[][
+main: func[/locals s cmd][
+  done: false
   mtx-new
   forever[
     if done [break]
