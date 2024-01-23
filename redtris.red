@@ -34,6 +34,16 @@ Z: new-tet ["r r ." ". r r" ". . ."]
 J: new-tet ["b . ." "b b b" ". . ."]
 L: new-tet [". . o" "o o o" ". . ."]
 
+transpose: function[m][
+  tmp: copy/deep m
+  collect[loop length? tmp [
+    keep wrap collect[
+      foreach row tmp [keep take row]]]]]
+
+; clocwise and counter-clockwise
+cw: func[m][transpose reverse copy m]
+cc: func[m][reverse transpose m]
+
 
 step-game: func[][
   i: 0
@@ -57,6 +67,9 @@ cmds: [
   ^Z: [tet: copy Z]
   ^J: [tet: copy J]
   ^L: [tet: copy L]
+  cw: [tet: cw tet]
+  cc: [tet: cc tet]
+  nl: [print ""]
   t: [grid-put tet]
   ?s: [print score]
   ?n: [print lines-cleared]]
@@ -68,6 +81,8 @@ main: function[][
     s: trim input
     if s <> "" [
       foreach cmd (split s " ") [
+        if cmd == ")" [cmd: "cw"]
+        if cmd == ";" [cmd: "nl"]
         if cmd == (uppercase copy cmd) [cmd: rejoin [#^ cmd]]
         do cmds/(to-word cmd)]]]]
 
