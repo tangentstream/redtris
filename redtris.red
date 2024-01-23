@@ -8,6 +8,7 @@ map: func[f xs][collect [foreach x copy xs [keep f x]]]
 map2d: func[f xs][map func[row][wrap map :f row] copy xs]
 
 upcase: func[s][uppercase copy s]
+rev: func[s][reverse copy s]
 
 ; duplicate x n times
 dup: func[n x][collect[loop n [keep copy x]]]
@@ -52,8 +53,9 @@ cc: func[{m rotated counterclockwise} m][reverse transpose m]
 blit: func[{copy sprite s onto grid g at x y} s g x y][
   cy: 0  tmp: copy/deep g
   foreach s-row s [
-    cy: cy + 1  cx: 0
-    g-row: tmp/(y + cy - 1)
+    cy: cy + 1  gy: (y + cy - 1) cx: 0
+    if gy > length? tmp [break]
+    g-row: tmp/(gy)
     foreach c s-row [
       cx: cx + 1  gx: (x + cx - 1)
       if gx > length? g-row [break]
@@ -79,8 +81,19 @@ rt-edge: func[{right edge of sprite s} s][
       i: i - 1]]
   res]
 
+bottom-edge: func[{top edge of sprite s} s][
+  res: length? s
+  foreach row rev s [
+    foreach c row [
+      if c <> "." [return res ]]
+    res: res - 1]
+  res]
+
 
 tx: 1 ty: 1
+
+dn: func[][ty: min (23 - bottom-edge tet) ty + 1]
+stamp: func[][mtx: blit tet mtx tx ty]
 
 cmds: [
   q: [done: true]
@@ -90,7 +103,7 @@ cmds: [
   s: [step-game]
   lf: [tx: max 1  tx - 1]
   rt: [tx: min (11 - rt-edge tet)  tx + 1]
-  v: [ty: ty + 1]
+  v: [dn]
   ^I: [tet: copy I tx: 4 ty: 1]
   ^O: [tet: copy O tx: 5 ty: 1]
   ^T: [tet: copy T tx: 4 ty: 1]
@@ -98,6 +111,7 @@ cmds: [
   ^Z: [tet: copy Z tx: 4 ty: 1]
   ^J: [tet: copy J tx: 4 ty: 1]
   ^L: [tet: copy L tx: 4 ty: 1]
+  ^V: [loop 23 [dn] stamp]
   ^P: [grid-put blit (map2d :upcase tet) mtx tx ty]
   cw: [tet: cw tet]
   cc: [tet: cc tet]
