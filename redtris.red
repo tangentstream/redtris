@@ -55,8 +55,9 @@ blit: func[{copy sprite s onto grid g at x y} s g x y][
     cy: cy + 1  cx: 0
     g-row: tmp/(y + cy - 1)
     foreach c s-row [
-      cx: cx + 1
-      if c <> "." [g-row/(x + cx - 1): s/(cy)/(cx)]]]
+      cx: cx + 1  gx: (x + cx - 1)
+      if gx > length? g-row [break]
+      if c <> "." [g-row/(gx): s/(cy)/(cx)]]]
   tmp]
 
 
@@ -69,7 +70,14 @@ step-game: func[][
       lines-cleared: lines-cleared + 1
       mtx/(i): line-new 10 "."]]]
 
-
+rt-edge: func[{right edge of sprite s} s][
+  res: 0
+  foreach row s [
+    loop (i: length? row) [
+      if i == res [break]
+      if row/(i) <> "." [res: i break]
+      i: i - 1]]
+  res]
 
 
 tx: 1 ty: 1
@@ -80,6 +88,9 @@ cmds: [
   p: [grid-put mtx]
   g: [mtx-get]
   s: [step-game]
+  lf: [tx: max 1  tx - 1]
+  rt: [tx: min (11 - rt-edge tet)  tx + 1]
+  v: [ty: ty + 1]
   ^I: [tet: copy I tx: 4 ty: 1]
   ^O: [tet: copy O tx: 5 ty: 1]
   ^T: [tet: copy T tx: 4 ty: 1]
@@ -110,7 +121,10 @@ main: func[/locals s cmd][
         if c == #" " [continue]
         if c == #"?" [state: 'inspect]
         if c == #")" [cmd: "cw"]
+        if c == #"(" [cmd: "cc"]
         if c == #";" [cmd: "nl"]
+        if c == #"<" [cmd: "lf"]
+        if c == #">" [cmd: "rt"]
         if cmd == (upcase cmd) [cmd: rejoin [#^ c]]
         if state == 'normal [do cmds/(to-word cmd)]]]]]
 
