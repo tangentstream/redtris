@@ -72,7 +72,7 @@ step-game: func[][
 
 
 
-tx: 5 ty: 1
+tx: 1 ty: 1
 
 cmds: [
   q: [done: true]
@@ -80,11 +80,11 @@ cmds: [
   p: [grid-put mtx]
   g: [mtx-get]
   s: [step-game]
-  ^I: [tet: copy I]
+  ^I: [tet: copy I tx: 4 ty: 1]
   ^O: [tet: copy O tx: 5 ty: 1]
-  ^T: [tet: copy T]
-  ^S: [tet: copy S]
-  ^Z: [tet: copy Z]
+  ^T: [tet: copy T tx: 4 ty: 1]
+  ^S: [tet: copy S tx: 4 ty: 1]
+  ^Z: [tet: copy Z tx: 4 ty: 1]
   ^J: [tet: copy J tx: 4 ty: 1]
   ^L: [tet: copy L tx: 4 ty: 1]
   ^P: [grid-put blit (map2d :upcase tet) mtx tx ty]
