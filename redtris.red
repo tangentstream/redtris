@@ -85,8 +85,8 @@ cmds: [
   ^T: [tet: copy T]
   ^S: [tet: copy S]
   ^Z: [tet: copy Z]
-  ^J: [tet: copy J]
-  ^L: [tet: copy L  tx: 4 ty: 1]
+  ^J: [tet: copy J tx: 4 ty: 1]
+  ^L: [tet: copy L tx: 4 ty: 1]
   ^P: [grid-put blit (map2d :upcase tet) mtx tx ty]
   cw: [tet: cw tet]
   cc: [tet: cc tet]
@@ -102,10 +102,16 @@ main: func[/locals s cmd][
     if done [break]
     s: trim input
     if s <> "" [
-      foreach cmd (split s " ") [
-        if cmd == ")" [cmd: "cw"]
-        if cmd == ";" [cmd: "nl"]
-        if cmd == (uppercase copy cmd) [cmd: rejoin [#^ cmd]]
-        do cmds/(to-word cmd)]]]]
+      state: 'normal
+      foreach c s [
+        cmd: rejoin [c]
+        if state == 'inspect [
+          state: 'normal  cmd: rejoin ["?" c]]
+        if c == #" " [continue]
+        if c == #"?" [state: 'inspect]
+        if c == #")" [cmd: "cw"]
+        if c == #";" [cmd: "nl"]
+        if cmd == (upcase cmd) [cmd: rejoin [#^ c]]
+        if state == 'normal [do cmds/(to-word cmd)]]]]]
 
 main
