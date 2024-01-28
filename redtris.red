@@ -14,11 +14,11 @@ foreach-ix: func['xsym 'isym xs block][
     do block]]
 
 zip: func[xs ys][collect[foreach x xs [keep wrap (x ys/(index? xs))]]]
-zipop: func['op xs ys][
+zipop: function['op xs ys][
   op: get op
   collect[foreach-ix x i xs [keep x op ys/(i)]]]
 
-zipwith: func[f xs ys][
+zipwith: function[f xs ys][
   collect[foreach-ix x i xs [keep f x ys/(i)]]]
 
 slice: func[start len xs][
@@ -60,13 +60,13 @@ mtx: mtx-new
 tet: grid-new 4 4 "."
 
 new-tet: func[xs][collect[foreach x xs [keep get-row x]]]
-I: new-tet [". . . ." "c c c c" ". . . ." ". . . ."]
-O: new-tet ["y y" "y y"]
-T: new-tet [". m ." "m m m" ". . ."]
-S: new-tet [". g g" "g g ." ". . ."]
-Z: new-tet ["r r ." ". r r" ". . ."]
-J: new-tet ["b . ." "b b b" ". . ."]
-L: new-tet [". . o" "o o o" ". . ."]
+I-tet: new-tet [". . . ." "c c c c" ". . . ." ". . . ."]
+O-tet: new-tet ["y y" "y y"]
+T-tet: new-tet [". m ." "m m m" ". . ."]
+S-tet: new-tet [". g g" "g g ." ". . ."]
+Z-tet: new-tet ["r r ." ". r r" ". . ."]
+J-tet: new-tet ["b . ." "b b b" ". . ."]
+L-tet: new-tet [". . o" "o o o" ". . ."]
 
 cw: func[{m rotated clockwise} m][transpose reverse copy m]
 cc: func[{m rotated counterclockwise} m][reverse transpose m]
@@ -137,10 +137,6 @@ drop: func[][
   fold :min inf zipop - dzh bet
 ]
 
-;
-;
-
-
 tx: 1 ty: 1
 
 dn: func[][ty: min (23 - bottom-extent tet) ty + 1]
@@ -155,13 +151,13 @@ cmds: [
   lf: [tx: max 1  tx - 1]
   rt: [tx: min (11 - rt-extent tet)  tx + 1]
   v: [dn]
-  ^I: [tet: copy I tx: 4 ty: 1]
-  ^O: [tet: copy O tx: 5 ty: 1]
-  ^T: [tet: copy T tx: 4 ty: 1]
-  ^S: [tet: copy S tx: 4 ty: 1]
-  ^Z: [tet: copy Z tx: 4 ty: 1]
-  ^J: [tet: copy J tx: 4 ty: 1]
-  ^L: [tet: copy L tx: 4 ty: 1]
+  ^I: [tet: copy I-tet tx: 4 ty: 1]
+  ^O: [tet: copy O-tet tx: 5 ty: 1]
+  ^T: [tet: copy T-tet tx: 4 ty: 1]
+  ^S: [tet: copy S-tet tx: 4 ty: 1]
+  ^Z: [tet: copy Z-tet tx: 4 ty: 1]
+  ^J: [tet: copy J-tet tx: 4 ty: 1]
+  ^L: [tet: copy L-tet tx: 4 ty: 1]
   ^V: [ty: ty + drop stamp]
   ^P: [put-game]
   cw: [tet: cw tet]
